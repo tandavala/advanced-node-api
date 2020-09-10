@@ -15,6 +15,7 @@ app.use(bodyParser.json());
 app.get("/", (req, res) => res.send("Hello Advanced api"));
 
 require("./routes/userRoute")(app);
+require("./routes/blogRoute")(app);
 
 if (["production", "ci"].includes(process.env.NODE_ENV)) {
   app.use(express.static("client/build"));

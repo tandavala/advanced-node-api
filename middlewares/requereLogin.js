@@ -1,6 +1,18 @@
+const jwt = require("jsonwebtoken");
+const keys = require("../config/keys");
 module.exports = (req, res, next) => {
-  if (!req.user) {
-    return res.status(401).send({ error: "You must lgo in!" });
+  const token = req.header("x-auth-token");
+
+  if (!token) {
+    res.status(401).json({ msg: "You must login first!" });
   }
-  next();
+
+  try {
+    const decoded = jwt.verify(token, keys.secretOrKey);
+
+    req.user = decoded.user;
+    next();
+  } catch (error) {
+    res.status(401).json({ msg: "token is invalid" });
+  }
 };
