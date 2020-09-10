@@ -3,7 +3,6 @@ const jwt = require("jsonwebtoken");
 const keys = require("../config/keys");
 
 const User = require("../models/User");
-const { restart } = require("nodemon");
 
 module.exports = (app) => {
   app.post("/api/users", async (req, res) => {
