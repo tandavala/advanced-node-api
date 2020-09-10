@@ -7,4 +7,5 @@ module.exports = {
   redisUrl: "redis://127.0.0.1:6379",
   accessKeyId: "AKIAIWSXFHRM7F6Z3NWQ",
   secretAccessKey: "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",
+  secretOrKey: "amendicasikulo",
 };
