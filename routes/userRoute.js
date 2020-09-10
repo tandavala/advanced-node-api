@@ -44,36 +44,35 @@ module.exports = (app) => {
     }
   });
 
-  app.post("/api/login", (req, res) => {
+  app.post("/api/login", async (req, res) => {
     const { name, password } = req.body;
 
     if (!name && !password) {
       return res.status(400).json({ msg: "Name and password required!" });
     }
 
-    User.findOne({ name: name }).then((user) => {
-      if (!user) {
-        return res.status(404).json({ msg: "This user does not exist" });
-      }
-      bcrypt.compare(password, user.password).then((err, isMatch) => {
-        if (isMatch) {
-          const payload = { id: user.id, name: user.name };
+    const user = await User.findOne({ name });
 
-          jwt.sign(
-            payload,
-            keys.secretOrKey,
-            { expiresIn: 3600 },
-            (err, token) => {
-              res.json({
-                success: true,
-                token: "Bearer " + token,
-              });
-            }
-          );
-        } else {
-          return res.status(400).json("bad");
-        }
-      });
+    if (!user) {
+      return res.status(404).json({ msg: "this user does not exist" });
+    }
+
+    const isEqual = bcrypt.compare(password, user.password);
+
+    if (!isEqual) {
+      return res.status(400).json({ msg: "password incorrect" });
+    }
+
+    const payload = {
+      user: {
+        id: user.id,
+        name: user.name,
+      },
+    };
+    const token = await jwt.sign(payload, keys.secretOrKey, {
+      expiresIn: "24h",
     });
+
+    return res.status(200).json({ token: token });
   });
 };
